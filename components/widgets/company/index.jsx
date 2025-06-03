@@ -3,39 +3,74 @@
 import { useEffect, useRef, useState } from "react";
 import { Factory, Users, Loader2, Boxes } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/context/language-context";
 
-const counters = [
-  {
-    id: 1,
-    target: 400,
-    suffix: " Adet",
-    label: "Makina Parkuru",
-    icon: Loader2,
-  },
-  {
-    id: 2,
-    target: 13000,
-    suffix: " M2",
-    label: "Fabrika Alanı",
-    icon: Factory,
-  },
-  {
-    id: 3,
-    target: 600,
-    suffix: " Kişi",
-    label: "Profesyonel Ekip",
-    icon: Users,
-  },
-  {
-    id: 4,
-    target: 1500000,
-    suffix: " Adet",
-    label: "Üretim Kapasitesi",
-    icon: Boxes,
-  },
-];
-
+const countersData = {
+  tr: [
+    {
+      id: 1,
+      target: 400,
+      suffix: " Adet",
+      label: "Makina Parkuru",
+      icon: Loader2,
+    },
+    {
+      id: 2,
+      target: 13000,
+      suffix: " M2",
+      label: "Fabrika Alanı",
+      icon: Factory,
+    },
+    {
+      id: 3,
+      target: 600,
+      suffix: " Kişi",
+      label: "Profesyonel Ekip",
+      icon: Users,
+    },
+    {
+      id: 4,
+      target: 1500000,
+      suffix: " Adet",
+      label: "Üretim Kapasitesi",
+      icon: Boxes,
+    },
+  ],
+  en: [
+    {
+      id: 1,
+      target: 400,
+      suffix: " pcs",
+      label: "Machine Park",
+      icon: Loader2,
+    },
+    {
+      id: 2,
+      target: 13000,
+      suffix: " m²",
+      label: "Factory Area",
+      icon: Factory,
+    },
+    {
+      id: 3,
+      target: 600,
+      suffix: " People",
+      label: "Professional Team",
+      icon: Users,
+    },
+    {
+      id: 4,
+      target: 1500000,
+      suffix: " pcs",
+      label: "Production Capacity",
+      icon: Boxes,
+    },
+  ],
+};
 export default function CounterSection() {
+  const { language } = useLanguage();
+  const counters = countersData[language] || countersData.tr;
+
   const [values, setValues] = useState(counters.map(() => 0));
   const [isRunning, setIsRunning] = useState(false);
 

@@ -4,27 +4,50 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/context/language-context";
 
-const slides = [
-  {
-    id: 1,
-    title: "Tekstil Sektöründe Lider",
-    subtitle: "Kalite ve Güvenle Üretim Yapıyoruz",
-    image: "/img/hero/slider1.jpg",
-  },
-  {
-    id: 2,
-    title: "Modern Tasarımlar",
-    subtitle: "Yenilikçi ve Şık Koleksiyonlar",
-    image: "/img/hero/slider2.jpg",
-  },
-  {
-    id: 3,
-    title: "Sürdürülebilir Üretim",
-    subtitle: "Doğa Dostu Malzemeler ve Teknolojiler",
-    image: "/img/hero/slider3.jpg",
-  },
-];
+const slidesData = {
+  tr: [
+    {
+      id: 1,
+      title: "Tekstil Sektöründe Lider",
+      subtitle: "Kalite ve Güvenle Üretim Yapıyoruz",
+      image: "/img/hero/slider1.jpg",
+    },
+    {
+      id: 2,
+      title: "Modern Tasarımlar",
+      subtitle: "Yenilikçi ve Şık Koleksiyonlar",
+      image: "/img/hero/slider2.jpg",
+    },
+    {
+      id: 3,
+      title: "Sürdürülebilir Üretim",
+      subtitle: "Doğa Dostu Malzemeler ve Teknolojiler",
+      image: "/img/hero/slider3.jpg",
+    },
+  ],
+  en: [
+    {
+      id: 1,
+      title: "Leader in Textile Industry",
+      subtitle: "We Produce With Quality and Trust",
+      image: "/img/hero/slider1.jpg",
+    },
+    {
+      id: 2,
+      title: "Modern Designs",
+      subtitle: "Innovative and Stylish Collections",
+      image: "/img/hero/slider2.jpg",
+    },
+    {
+      id: 3,
+      title: "Sustainable Production",
+      subtitle: "Eco-friendly Materials and Technologies",
+      image: "/img/hero/slider3.jpg",
+    },
+  ],
+};
 
 const variants = {
   enter: (direction) => ({
@@ -32,11 +55,7 @@ const variants = {
     rotateX: direction > 0 ? 20 : -20,
     opacity: 0,
   }),
-  center: {
-    rotateY: 0,
-    rotateX: 0,
-    opacity: 1,
-  },
+  center: { rotateY: 0, rotateX: 0, opacity: 1 },
   exit: (direction) => ({
     rotateY: direction < 0 ? 90 : -90,
     rotateX: direction < 0 ? 20 : -20,
@@ -45,9 +64,10 @@ const variants = {
 };
 
 export default function HeroSlider() {
+  const { language } = useLanguage();
   const [[page, direction], setPage] = useState([0, 0]);
   const timeoutRef = useRef(null);
-
+  const slides = slidesData[language] || slidesData["tr"];
   const paginate = (newDirection) => {
     setPage(([currentPage]) => {
       let newPage = currentPage + newDirection;
@@ -57,18 +77,13 @@ export default function HeroSlider() {
     });
   };
 
-  // Otomatik geçiş için useEffect
   useEffect(() => {
-    // Önce eski timer varsa temizle
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
     timeoutRef.current = setTimeout(() => {
       paginate(1);
-    }, 5000); // 5 saniye
-
-    // Cleanup
+    }, 5000);
     return () => clearTimeout(timeoutRef.current);
-  }, [page]);
+  }, [page, language]);
 
   return (
     <section className="relative w-full h-screen overflow-hidden select-none perspective-[1500px]">
@@ -104,7 +119,6 @@ export default function HeroSlider() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Sol Ok */}
       <button
         onClick={() => paginate(-1)}
         aria-label="Previous Slide"
@@ -113,7 +127,6 @@ export default function HeroSlider() {
         <ChevronLeft size={32} />
       </button>
 
-      {/* Sağ Ok */}
       <button
         onClick={() => paginate(1)}
         aria-label="Next Slide"
@@ -122,7 +135,6 @@ export default function HeroSlider() {
         <ChevronRight size={32} />
       </button>
 
-      {/* Noktalar */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex space-x-4">
         {slides.map((slide, idx) => (
           <button

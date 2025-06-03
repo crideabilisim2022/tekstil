@@ -1,15 +1,28 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import menuItems from "@/data/menuItems";
+import { useLanguage } from "@/context/language-context";
 
 export default function Header() {
+  const { language, changeLanguage } = useLanguage();
+
   const [openMenu, setOpenMenu] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMobileDropdowns, setOpenMobileDropdowns] = useState([]);
+
+  useEffect(() => {
+    const browserLang = navigator.language.slice(0, 2); // "en", "tr", vs.
+    if (!language) {
+      if (browserLang === "tr" || browserLang === "en") {
+        changeLanguage(browserLang);
+      } else {
+        changeLanguage("en"); // varsayılan
+      }
+    }
+  }, []);
 
   const toggleMenu = (label) => {
     setOpenMenu(openMenu === label ? null : label);
@@ -25,26 +38,28 @@ export default function Header() {
     }
   };
 
+  const translatedMenuItems = menuItems.map((item) => {
+    const label = language === "en" ? item.labelEn || item.label : item.label;
+    const subItems = item.subItems
+      ? item.subItems.map((sub) => ({
+          ...sub,
+          label: language === "en" ? sub.labelEn || sub.label : sub.label,
+        }))
+      : null;
+    return { ...item, label, subItems };
+  });
+
   return (
     <header className="sticky top-0 z-50 bg-[#FFFFFF] text-[#222222] shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Sol - Logo */}
         <Link href={"/"} className="text-2xl font-bold text-[#B71C1C]">
-          Tekstil Firma
+          {language === "en" ? "Textile Company" : "Tekstil Firma"}
         </Link>
 
-        {/* Mobil Menü Butonu */}
-        <button
-          className="md:hidden text-[#222222] focus:outline-none transition-transform duration-300 hover:text-[#B71C1C]"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Mobil menüyü aç/kapa"
-          style={{ rotate: mobileOpen ? "90deg" : "0deg" }}
-        >
-          {mobileOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-
-        {/* Masaüstü Menü */}
+        {/* Orta - Masaüstü Menü */}
         <nav className="hidden md:flex space-x-8">
-          {menuItems.map((item) => (
+          {translatedMenuItems.map((item) => (
             <div
               key={item.label}
               className="relative group"
@@ -91,6 +106,39 @@ export default function Header() {
             </div>
           ))}
         </nav>
+
+        {/* Sağ - Dil Seçici + Mobil Menü Butonu */}
+        <div className="flex items-center gap-4">
+          {/* Masaüstü Dil Seçici */}
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => changeLanguage("tr")}
+              className={`transition-transform hover:scale-110 ${
+                language === "tr" ? "opacity-100" : "opacity-50"
+              }`}
+            >
+              🇹🇷
+            </button>
+            <button
+              onClick={() => changeLanguage("en")}
+              className={`transition-transform hover:scale-110 ${
+                language === "en" ? "opacity-100" : "opacity-50"
+              }`}
+            >
+              🇬🇧
+            </button>
+          </div>
+
+          {/* Mobil Menü Butonu */}
+          <button
+            className="md:hidden text-[#222222] focus:outline-none transition-transform duration-300 hover:text-[#B71C1C]"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Mobil menüyü aç/kapa"
+            style={{ rotate: mobileOpen ? "90deg" : "0deg" }}
+          >
+            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobil Menü */}
@@ -102,7 +150,7 @@ export default function Header() {
             exit={{ height: 0 }}
             className="md:hidden overflow-hidden bg-[#F5F5F5] px-4 pb-4 text-[#555555]"
           >
-            {menuItems.map((item) => (
+            {translatedMenuItems.map((item) => (
               <div key={item.label} className="mb-2">
                 <button
                   onClick={() => toggleMobileDropdown(item.label)}
@@ -139,6 +187,26 @@ export default function Header() {
                 )}
               </div>
             ))}
+
+            {/* Mobil Dil Seçici */}
+            <div className="flex justify-center gap-4 mt-4 md:hidden">
+              <button
+                onClick={() => changeLanguage("tr")}
+                className={`text-2xl transition-transform hover:scale-110 ${
+                  language === "tr" ? "opacity-100" : "opacity-50"
+                }`}
+              >
+                🇹🇷
+              </button>
+              <button
+                onClick={() => changeLanguage("en")}
+                className={`text-2xl transition-transform hover:scale-110 ${
+                  language === "en" ? "opacity-100" : "opacity-50"
+                }`}
+              >
+                🇬🇧
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

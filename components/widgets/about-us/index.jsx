@@ -4,32 +4,57 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { CheckCircle, PenTool, Clock } from "lucide-react";
+import { useLanguage } from "@/context/language-context";
 
-const features = [
-  {
-    id: 1,
-    icon: CheckCircle,
-    title: "Kalite",
-    description:
-      "Polat Tekstil kaliteden ödün vermeden tüm standartlara uygun üretimi ve doğru çalışma prensibi ile sektörde yerini almıştır.",
-  },
-  {
-    id: 2,
-    icon: PenTool,
-    title: "Tasarım",
-    description:
-      "Profesyonel ekibimizle talep edilen her ürün için en doğru tasarım ve dizayn uzmanlığımız ile taçlanmaktadır.",
-  },
-  {
-    id: 3,
-    icon: Clock,
-    title: "Termin",
-    description:
-      "Başlangıçtan itibaren aynı özenle çalışan kadromuz, termin konusundada müşteri hassasiyetini düşünerek ilerlemektedir.",
-  },
-];
+const featuresData = {
+  tr: [
+    {
+      id: 1,
+      icon: CheckCircle,
+      title: "Kalite",
+      description:
+        "Polat Tekstil kaliteden ödün vermeden tüm standartlara uygun üretimi ve doğru çalışma prensibi ile sektörde yerini almıştır.",
+    },
+    {
+      id: 2,
+      icon: PenTool,
+      title: "Tasarım",
+      description:
+        "Profesyonel ekibimizle talep edilen her ürün için en doğru tasarım ve dizayn uzmanlığımız ile taçlanmaktadır.",
+    },
+    {
+      id: 3,
+      icon: Clock,
+      title: "Termin",
+      description:
+        "Başlangıçtan itibaren aynı özenle çalışan kadromuz, termin konusundada müşteri hassasiyetini düşünerek ilerlemektedir.",
+    },
+  ],
+  en: [
+    {
+      id: 1,
+      icon: CheckCircle,
+      title: "Quality",
+      description:
+        "Polat Tekstil holds its position in the sector with quality production standards and correct work principles.",
+    },
+    {
+      id: 2,
+      icon: PenTool,
+      title: "Design",
+      description:
+        "Our professional team crowns every requested product with the most accurate design and expertise.",
+    },
+    {
+      id: 3,
+      icon: Clock,
+      title: "Deadline",
+      description:
+        "Our dedicated team works carefully from the start, always considering customer sensitivity on deadlines.",
+    },
+  ],
+};
 
-// Sağdaki slider resimleri
 const sliderImages = [
   "/img/hero/slider1.jpg",
   "/img/hero/slider2.jpg",
@@ -42,7 +67,26 @@ const slideVariants = {
   exit: { opacity: 0, x: -50 },
 };
 
+const texts = {
+  tr: {
+    heading: "Biz Kimiz?",
+    description:
+      "Polat Tekstil olarak, sektöründe öncü, yenilikçi ve kaliteli üretim yapan bir firmayız.",
+    button: "Daha Fazla Bilgi",
+  },
+  en: {
+    heading: "Who Are We?",
+    description:
+      "As Polat Tekstil, we are a leading, innovative, and quality-driven company in our sector.",
+    button: "Learn More",
+  },
+};
+
 export default function AboutSection() {
+  const { language } = useLanguage();
+  const features = featuresData[language] || featuresData.tr;
+  const { heading, description, button } = texts[language] || texts.tr;
+
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -57,12 +101,11 @@ export default function AboutSection() {
       {/* Başlık ve alt çizgi */}
       <div className="max-w-xl mx-auto text-center mb-16">
         <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-2">
-          Biz Kimiz?
+          {heading}
         </h2>
         <div className="w-24 h-1 bg-red-600 mx-auto rounded-full mb-6"></div>
         <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
-          Polat Tekstil olarak, sektöründe öncü, yenilikçi ve kaliteli üretim
-          yapan bir firmayız.
+          {description}
         </p>
       </div>
 
@@ -106,7 +149,7 @@ export default function AboutSection() {
               href="/hakkimizda"
               className="inline-block bg-red-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-red-700 transition"
             >
-              Daha Fazla Bilgi
+              {button}
             </a>
           </motion.div>
         </div>
@@ -125,11 +168,12 @@ export default function AboutSection() {
             >
               <Image
                 src={sliderImages[current]}
-                alt={`Biz Kimiz Slider ${current + 1}`}
+                alt={`Who Are We Slider ${current + 1}`}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover object-center"
                 priority={current === 0}
+                draggable={false}
               />
             </motion.div>
           </AnimatePresence>

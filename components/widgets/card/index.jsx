@@ -2,35 +2,25 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-
-const cards = [
-  {
-    id: 1,
-    image: "/img/hero/slider2.jpg",
-    alt: "Kart 1",
-    title: "Kart 1",
-  },
-  {
-    id: 2,
-    image: "/img/hero/slider3.jpg",
-    alt: "Kart 2",
-    title: "Kart 2",
-  },
-  {
-    id: 3,
-    image: "/img/hero/slider2.jpg",
-    alt: "Kart 3",
-    title: "Kart 3",
-  },
-  {
-    id: 4,
-    image: "/img/hero/slider3.jpg",
-    alt: "Kart 4",
-    title: "Kart 4",
-  },
-];
+import { useLanguage } from "@/context/language-context";
+const cardsData = {
+  tr: [
+    { id: 1, image: "/img/hero/slider2.jpg", alt: "Kart 1", title: "Kart 1" },
+    { id: 2, image: "/img/hero/slider3.jpg", alt: "Kart 2", title: "Kart 2" },
+    { id: 3, image: "/img/hero/slider2.jpg", alt: "Kart 3", title: "Kart 3" },
+    { id: 4, image: "/img/hero/slider3.jpg", alt: "Kart 4", title: "Kart 4" },
+  ],
+  en: [
+    { id: 1, image: "/img/hero/slider2.jpg", alt: "Card 1", title: "Card 1" },
+    { id: 2, image: "/img/hero/slider3.jpg", alt: "Card 2", title: "Card 2" },
+    { id: 3, image: "/img/hero/slider2.jpg", alt: "Card 3", title: "Card 3" },
+    { id: 4, image: "/img/hero/slider3.jpg", alt: "Card 4", title: "Card 4" },
+  ],
+};
 
 export default function CardsSection() {
+  const { language } = useLanguage();
+  const cards = cardsData[language] || cardsData.tr;
   return (
     <section className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
       {cards.map(({ id, image, alt, title }) => (

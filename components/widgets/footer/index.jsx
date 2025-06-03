@@ -2,7 +2,8 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
-import menuColumns from "@/data/menuColumns";
+import menuColumnsData from "@/data/menuColumns";
+import { useLanguage } from "@/context/language-context";
 
 const containerVariants = {
   hidden: {},
@@ -19,17 +20,46 @@ const itemVariants = {
 };
 
 export default function Footer() {
-  const socialIcons = [
-    { icon: <Facebook size={24} />, href: "https://facebook.com" },
-    { icon: <Instagram size={24} />, href: "https://instagram.com" },
-    { icon: <Twitter size={24} />, href: "https://twitter.com" },
-    { icon: <Linkedin size={24} />, href: "https://linkedin.com" },
-  ];
+  const { language } = useLanguage();
+
+  // Eğer language henüz gelmemişse hiçbir şey render etme
+  if (!language || !menuColumnsData[language]) return null;
+
+  const texts = {
+    tr: {
+      companyName: "Tekstil Firma",
+      companyDescription:
+        "Türkiye'nin lider tekstil firması. Kalite ve güvenle hizmet veriyoruz.",
+      contactTitle: "İletişim",
+      address: "Adres: Atatürk Cad. No:123, İstanbul, Türkiye",
+      phoneLabel: "Telefon:",
+      phoneNumber: "+90 212 345 67 89",
+      emailLabel: "Email:",
+      email: "info@tekstilfirma.com",
+      privacyPolicy: "Gizlilik Politikası",
+      copyright: "Tüm hakları saklıdır.",
+    },
+    en: {
+      companyName: "Textile Company",
+      companyDescription:
+        "Turkey's leading textile company. We provide quality and reliable services.",
+      contactTitle: "Contact",
+      address: "Address: Atatürk St. No:123, Istanbul, Turkey",
+      phoneLabel: "Phone:",
+      phoneNumber: "+90 212 345 67 89",
+      emailLabel: "Email:",
+      email: "info@tekstilfirma.com",
+      privacyPolicy: "Privacy Policy",
+      copyright: "All rights reserved.",
+    },
+  };
+
+  const t = texts[language] || texts.tr;
+  const menuColumns = menuColumnsData[language] || [];
 
   return (
     <footer className="bg-white text-[#222222] pt-10 pb-6 select-none">
       <div className="max-w-7xl mx-auto px-4 text-center md:text-left">
-        {/* Üst Kısım */}
         <motion.div
           className="md:flex md:justify-between md:items-start gap-10"
           variants={containerVariants}
@@ -43,43 +73,47 @@ export default function Footer() {
             variants={itemVariants}
           >
             <h2 className="text-2xl font-bold text-[#B71C1C] mb-3">
-              Tekstil Firma
+              {t.companyName}
             </h2>
             <p className="text-[#555555] max-w-sm mx-auto md:mx-0">
-              Türkiye'nin lider tekstil firması. Kalite ve güvenle hizmet
-              veriyoruz.
+              {t.companyDescription}
             </p>
           </motion.div>
 
           {/* Menü Sütunları */}
-          <motion.div
-            className="flex justify-center md:justify-start gap-16 flex-wrap md:flex-nowrap md:flex-1"
-            variants={containerVariants}
-          >
-            {menuColumns.map(({ title, links }) => (
-              <motion.div
-                key={title}
-                className="min-w-[120px]"
-                variants={itemVariants}
-              >
-                <h3 className="text-lg font-semibold mb-4 text-[#222222]">
-                  {title}
-                </h3>
-                <ul className="space-y-2">
-                  {links.map(({ label, href }) => (
-                    <li key={label}>
-                      <Link
-                        href={href}
-                        className="text-[#555555] hover:text-[#B71C1C] transition-colors duration-300"
-                      >
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </motion.div>
+          {menuColumns.length > 0 && (
+            <motion.div
+              key={language}
+              className="flex justify-center md:justify-start gap-16 flex-wrap md:flex-nowrap md:flex-1"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {menuColumns.map(({ title, links }) => (
+                <motion.div
+                  key={title}
+                  className="min-w-[120px]"
+                  variants={itemVariants}
+                >
+                  <h3 className="text-lg font-semibold mb-4 text-[#222222]">
+                    {title}
+                  </h3>
+                  <ul className="space-y-2">
+                    {links.map(({ label, href }) => (
+                      <li key={label}>
+                        <Link
+                          href={href}
+                          className="text-[#555555] hover:text-[#B71C1C] transition-colors duration-300"
+                        >
+                          {label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
           {/* İletişim */}
           <motion.div
@@ -87,33 +121,33 @@ export default function Footer() {
             variants={itemVariants}
           >
             <h3 className="text-lg font-semibold mb-4 text-[#222222]">
-              İletişim
+              {t.contactTitle}
             </h3>
             <address className="not-italic text-[#555555] space-y-2">
-              <p>Adres: Atatürk Cad. No:123, İstanbul, Türkiye</p>
+              <p>{t.address}</p>
               <p>
-                Telefon:{" "}
-                <a href="tel:+902123456789" className="hover:text-[#B71C1C]">
-                  +90 212 345 67 89
+                {t.phoneLabel}{" "}
+                <a
+                  href={`tel:${t.phoneNumber.replace(/ /g, "")}`}
+                  className="hover:text-[#B71C1C]"
+                >
+                  {t.phoneNumber}
                 </a>
               </p>
               <p>
-                Email:{" "}
-                <a
-                  href="mailto:info@tekstilfirma.com"
-                  className="hover:text-[#B71C1C]"
-                >
-                  info@tekstilfirma.com
+                {t.emailLabel}{" "}
+                <a href={`mailto:${t.email}`} className="hover:text-[#B71C1C]">
+                  {t.email}
                 </a>
               </p>
             </address>
 
             {/* Sosyal Medya */}
             <div className="flex justify-center md:justify-start mt-6 gap-6">
-              {socialIcons.map(({ icon, href }, i) => (
+              {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
                 <motion.a
                   key={i}
-                  href={href}
+                  href="#"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#555555] hover:text-[#B71C1C] transition-colors duration-300"
@@ -123,7 +157,7 @@ export default function Footer() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.15, duration: 0.2 }}
                 >
-                  {icon}
+                  <Icon size={24} />
                 </motion.a>
               ))}
             </div>
@@ -133,9 +167,9 @@ export default function Footer() {
 
       {/* Alt Kısım */}
       <div className="border-t border-[#E0E0E0] mt-10 pt-6 text-[#555555] text-center text-sm">
-        © {new Date().getFullYear()} Tekstil Firma. Tüm hakları saklıdır.{" "}
+        © {new Date().getFullYear()} {t.companyName}. {t.copyright}{" "}
         <Link href="/privacy" className="hover:text-[#B71C1C]">
-          Gizlilik Politikası
+          {t.privacyPolicy}
         </Link>
       </div>
     </footer>

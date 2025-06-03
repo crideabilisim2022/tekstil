@@ -2,28 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Globe, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Globe, ShieldCheck } from "lucide-react";
+import { useLanguage } from "@/context/language-context"; // Kendi dil yönetimini kullanıyorsan
 
-// Sertifikalar listesi
-const certificates = [
-  "ISO 9001",
-  "CE",
-  "OEKO-TEX",
-  "ISO 14001",
-  "GOTS",
-  "BSCI",
-];
+// Sertifikalar listesi (her dilde farklı olabilir, burada örnek olarak aynısı)
+const certificatesData = {
+  tr: ["ISO 9001", "CE", "OEKO-TEX", "ISO 14001", "GOTS", "BSCI"],
+  en: ["ISO 9001", "CE", "OEKO-TEX", "ISO 14001", "GOTS", "BSCI"],
+};
 
-// Örnek 41 ülke noktası (random konumlar)
+// Dünya üzerindeki ülke noktaları sabit, değiştirmedik
 const countryPoints = Array.from({ length: 41 }, (_, i) => ({
   id: i,
   cx: Math.random() * 780 + 10,
   cy: Math.random() * 380 + 10,
 }));
 
-// Carousel bileşeni (3 sn bekleyip başa dönme entegreli)
 function Carousel({ items }) {
-  const duplicatedItems = [...items, ...items]; // Sonsuz scroll için iki kopya
+  const duplicatedItems = [...items, ...items];
 
   return (
     <div className="overflow-hidden w-full">
@@ -51,7 +47,6 @@ function Carousel({ items }) {
   );
 }
 
-// Noktalarla dünya haritası svg'si
 function DotWorldMap() {
   return (
     <svg
@@ -95,6 +90,8 @@ function DotWorldMap() {
 }
 
 export default function CertificatesExportSection() {
+  const { language } = useLanguage();
+  const certificates = certificatesData[language] || certificatesData.tr;
   const [count, setCount] = useState(0);
   const targetCount = 41;
 
@@ -104,6 +101,28 @@ export default function CertificatesExportSection() {
       return () => clearTimeout(timeout);
     }
   }, [count]);
+
+  // Çok dilli metinler
+  const texts = {
+    tr: {
+      title: "Kalite Belgelerimiz",
+      description:
+        "Üretimimiz, uluslararası standartlarda kalite belgeleriyle belgelenmiştir.",
+      exportText: "+{count} Ülkeye İhracat",
+      exportDescription:
+        "Kaliteli üretimimiz ile global pazarlarda yer alıyoruz. Her geçen gün daha fazla ülkeye ulaşıyoruz.",
+    },
+    en: {
+      title: "Our Quality Certificates",
+      description:
+        "Our production is certified with international quality standards.",
+      exportText: "+{count} Countries Export",
+      exportDescription:
+        "With our quality production, we are present in global markets. We reach more countries every day.",
+    },
+  };
+
+  const t = texts[language] || texts.tr;
 
   return (
     <section className="relative bg-white py-28 px-6 overflow-hidden">
@@ -115,13 +134,8 @@ export default function CertificatesExportSection() {
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         {/* Kalite Belgeleri Carousel */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Kalite Belgelerimiz
-          </h2>
-          <p className="text-gray-600 mb-8">
-            Üretimimiz, uluslararası standartlarda kalite belgeleriyle
-            belgelenmiştir.
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">{t.title}</h2>
+          <p className="text-gray-600 mb-8">{t.description}</p>
 
           <Carousel items={certificates} />
         </div>
@@ -134,7 +148,7 @@ export default function CertificatesExportSection() {
           viewport={{ once: true }}
           whileHover={{ rotateY: 12, rotateX: 6, scale: 1.06 }}
           style={{ perspective: "1000px" }}
-          className="relative bg-transparent  border border-gray-100 rounded-3xl p-10 text-center flex flex-col items-center justify-center space-y-6 cursor-pointer overflow-hidden"
+          className="relative bg-transparent border border-gray-100 rounded-3xl p-10 text-center flex flex-col items-center justify-center space-y-6 cursor-pointer overflow-hidden"
         >
           {/* Parlak Gradient Arkaplan efekti */}
           <div className="absolute inset-0 bg-gradient-to-br from-red-100 via-white to-red-50 opacity-30 rounded-3xl pointer-events-none" />
@@ -148,23 +162,11 @@ export default function CertificatesExportSection() {
           </motion.div>
 
           <h3 className="text-4xl font-extrabold text-gray-900 tracking-tight drop-shadow-sm">
-            +
-            <motion.span
-              key={count}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="inline-block"
-            >
-              {count}
-            </motion.span>{" "}
-            Ülkeye İhracat
+            {t.exportText.replace("{count}", count)}
           </h3>
 
           <p className="text-gray-700 max-w-xs text-base leading-relaxed">
-            Kaliteli üretimimiz ile{" "}
-            <span className="font-semibold">global pazarlarda</span> yer
-            alıyoruz. Her geçen gün daha fazla ülkeye ulaşıyoruz.
+            {t.exportDescription}
           </p>
         </motion.div>
       </div>
