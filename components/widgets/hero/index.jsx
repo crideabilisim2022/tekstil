@@ -119,7 +119,7 @@ export default function HeroSlider() {
         </motion.div>
       </AnimatePresence>
 
-      <button
+      {/* <button
         onClick={() => paginate(-1)}
         aria-label="Previous Slide"
         className="absolute top-1/2 left-8 -translate-y-1/2 rounded-full bg-white bg-opacity-30 hover:bg-opacity-60 p-3 text-black transition cursor-pointer hover:scale-110"
@@ -133,7 +133,7 @@ export default function HeroSlider() {
         className="absolute top-1/2 right-8 -translate-y-1/2 rounded-full bg-white bg-opacity-30 hover:bg-opacity-60 p-3 text-black transition cursor-pointer hover:scale-110"
       >
         <ChevronRight size={32} />
-      </button>
+      </button> */}
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex space-x-4">
         {slides.map((slide, idx) => (
